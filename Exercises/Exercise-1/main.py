@@ -1,3 +1,6 @@
+import os
+import zipfile
+
 import requests
 
 download_uris = [
@@ -12,8 +15,23 @@ download_uris = [
 
 
 def main():
-    # your code here
-    pass
+    os.makedirs("downloads", exist_ok=True)
+    for uri in download_uris:
+        print(f"Downloading {uri}")
+        try:
+            response = requests.get(uri)
+            with open(f'downloads/{uri.split("/")[-1]}', "wb") as file:
+                file.write(response.content)
+            print(f"Downloaded {uri}")
+
+            # unzip
+            with zipfile.ZipFile(f'downloads/{uri.split("/")[-1]}', "r") as zip_ref:
+                zip_ref.extractall("downloads")
+
+        except Exception as e:
+            print(f"Failed to download {uri}", e)
+
+        # break
 
 
 if __name__ == "__main__":
